@@ -18,13 +18,14 @@ const initial=[
 ["Эрхарт. Невероятный полёт полёвки вокруг света","Торбен Кульманн",128],
 ["Тимур и его команда","Аркадий Гайдар",192],
 ["Денискины рассказы","Виктор Драгунский",256]];
-const seed=()=>initial.map((r,i)=>({id:i+1,title:r[0],author:r[1],pages:r[2]??null,month:r[3]||"",status:"todo",rating:"",notes:""}));
+const seed=()=>initial.map((r,i)=>({id:i+1,title:r[0],author:r[1],pages:r[2]??null,month:r[3]||"",status:"done",rating:"",notes:""}));
 const key="platon-books-v1",gkey="platon-goal-v1";let books;try{books=JSON.parse(localStorage.getItem(key))||seed();if(!Array.isArray(books))books=seed()}catch{books=seed()}
 // Add newly published catalogue entries without resetting readers' locally saved progress.
 const addedTitles=["THE BOOK. Как создать цивилизацию заново","Линдберг. Невероятные приключения летающего мышонка","Армстронг. Невероятное путешествие мышонка на Луну","Эдисон. Тайна пропавшего сокровища","Эйнштейн. Фантастическое путешествие мышонка через пространство и время","Эрхарт. Невероятный полёт полёвки вокруг света","Тимур и его команда","Денискины рассказы"];
 const titleKey=s=>String(s||"").toLocaleLowerCase("ru").replace(/ё/g,"е").trim();
 let newEntries=0;for(const entry of seed().filter(x=>addedTitles.includes(x.title))){if(!books.some(b=>titleKey(b.title)===titleKey(entry.title))){entry.id=Math.max(0,...books.map(x=>Number(x.id)||0))+1;books.push(entry);newEntries++}}
 if(newEntries){try{localStorage.setItem(key,JSON.stringify(books))}catch{}}
+const readFlag="platon-read-all-v2";try{if(localStorage.getItem(readFlag)!=="1"){books.forEach(b=>b.status="done");localStorage.setItem(key,JSON.stringify(books));localStorage.setItem(readFlag,"1")}}catch{books.forEach(b=>b.status="done")}
 
 const el=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function persist(){try{localStorage.setItem(key,JSON.stringify(books))}catch{}render()}
